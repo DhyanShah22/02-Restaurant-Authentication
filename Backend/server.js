@@ -2,6 +2,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 const helmet = require('helmet')
 const morgan = require('morgan')
+const cors = require('cors')
+
 
 require('dotenv').config()
 const app = express()
@@ -10,6 +12,7 @@ app.use(morgan('dev'))
 const userRoute = require('./Routes/userRoutes')
 
 app.use(express.json())
+app.use(cors())
 app.use(helmet())
 
 app.use((req, res, next) => {
