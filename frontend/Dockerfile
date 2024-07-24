@@ -5,4 +5,7 @@ WORKDIR /app
 COPY . .
 
 RUN npm i
-E"
+
+EXPOSE 3000
+
+CMD ["npm", "start", "--", "--host"]
