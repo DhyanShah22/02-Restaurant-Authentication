@@ -12,16 +12,26 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Clear previous errors
+
     try {
-      const { data } = await signup({ Email: email, Password: password, Role: role });
-      localStorage.setItem('token', data.token);
+      const response = await signup({ Email: email, Password: password, Role: role });
+      console.log('Signup Response:', response);
+      localStorage.setItem('token', response.token);
       if (role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/restaurant');
       }
     } catch (error) {
-      setError(error.response.data.error);
+      console.error('Error during signup:', error);
+      let errorMessage = 'Signup Failed';
+      if (error.response) {
+        errorMessage = error.response.data.error || 'Signup Failed';
+      } else if (error.request) {
+        errorMessage = 'Network error or server is down';
+      }
+      setError(errorMessage);
     }
   };
 
@@ -30,15 +40,39 @@ const Signup = () => {
       <form onSubmit={handleSubmit} className="signup-form">
         <h2>Signup</h2>
         {error && <p className="error">{error}</p>}
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <input 
+          type="email" 
+          placeholder="Email" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          required 
+        />
+        <input 
+          type="password" 
+          placeholder="Password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          required 
+        />
         <div className="role-selection">
           <label>
-            <input type="radio" name="role" value="customer" checked={role === 'customer'} onChange={() => setRole('customer')} />
+            <input 
+              type="radio" 
+              name="role" 
+              value="customer" 
+              checked={role === 'customer'} 
+              onChange={() => setRole('customer')} 
+            />
             Customer
           </label>
           <label>
-            <input type="radio" name="role" value="admin" checked={role === 'admin'} onChange={() => setRole('admin')} />
+            <input 
+              type="radio" 
+              name="role" 
+              value="admin" 
+              checked={role === 'admin'} 
+              onChange={() => setRole('admin')} 
+            />
             Admin
           </label>
         </div>
@@ -49,3 +83,4 @@ const Signup = () => {
 };
 
 export default Signup;
+
